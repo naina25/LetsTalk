@@ -1,19 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, createContext } from "react";
 import { useHistory } from "react-router-dom";
 import { auth } from "../firebase";
 
 const AuthContext = React.createContext();
 
-export const AuthProvider = ({ childern }) => {
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
-      history.push("/chats");
+      if (user) history.push("/chats");
     });
   }, [user, history]);
 
@@ -21,7 +23,7 @@ export const AuthProvider = ({ childern }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && childern}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
