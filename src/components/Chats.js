@@ -11,6 +11,18 @@ const Chats = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
+  const handleLogout = async () => {
+    await auth.signOut();
+    history.push("/");
+  };
+
+  const getFile = async (url) => {
+    const response = await fetch(url);
+    const data = await response.blob();
+
+    return new File([data], "userPhoto.jpg", { type: "image/jpeg" });
+  };
+
   useEffect(() => {
     if (!user) {
       history.push("/");
@@ -26,13 +38,28 @@ const Chats = () => {
       })
       .then(() => {
         setLoading(false);
+      })
+      .catch(() => {
+        let formdata = new FormData();
+        formdata.append("email", user.email);
+        formdata.append("username", user.email);
+        formdata.append("secret", user.uid);
+
+        getFile(user.photoUrl).then((avatar) => {
+          formdata.append("avatar", avatar, avatar.name);
+
+          axios
+            .post("https://api.chatengine.io/users", formdata, {
+              headers: {
+                "private-key": "8f5aaa3c-7aa1-4341-ad33-ad1f2485c981",
+              },
+            })
+            .then(() => setLoading(false))
+            .catch((error) => console.log(error));
+        });
       });
   }, [user, history]);
 
-  const handleLogout = async () => {
-    await auth.signOut();
-    history.push("/");
-  };
   return (
     <div className="chats-page">
       <div className="nav-bar">
