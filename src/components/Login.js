@@ -11,9 +11,7 @@ const Login = () => {
         <div
           className="login-button google"
           onClick={() =>
-            firebase
-              .auth()
-              .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+            auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
           }>
           <GoogleOutlined /> Sign in with Google
         </div>
@@ -21,9 +19,7 @@ const Login = () => {
         <div
           className="login-button facebook"
           onClick={() =>
-            firebase
-              .auth()
-              .signInWithPopup(new firebase.auth.FacebookAuthProvider())
+            auth.signInWithRedirect(new firebase.auth.FacebookAuthProvider())
           }>
           <FacebookOutlined /> Sign in with Facebook
         </div>
