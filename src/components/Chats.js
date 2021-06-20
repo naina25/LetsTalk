@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ChatEngine, getOrCreateChat } from "react-chat-engine";
 import { auth } from "../firebase";
+import firebase from "firebase/app";
 
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
@@ -14,8 +15,6 @@ const Chats = () => {
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
-
-  console.log(user);
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -69,6 +68,11 @@ const Chats = () => {
             });
         });
       });
+
+    if (user.providerData[0].providerId === "facebook.com") {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      user.linkWithPopup(provider);
+    }
   }, [user, history, private_key, project_id]);
 
   if (!user || loading) return "Loading...";
